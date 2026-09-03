@@ -1,0 +1,6 @@
+{
+  "name": "Mud & Trails - Rasso 4x4 Off-Road",
+  "description": "Plateforme communautaire off-road pour découvrir, organiser et s'inscrire aux rassemblements 4x4 en France avec Toyota Land Cruiser et véhicules tout-terrain.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
