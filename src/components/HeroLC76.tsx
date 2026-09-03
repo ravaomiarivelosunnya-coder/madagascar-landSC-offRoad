@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Compass, Calendar, ShieldCheck, MapPin, Gauge, Flame, Sparkles, Terminal } from 'lucide-react';
+import { Compass, Calendar, ShieldCheck, MapPin, Gauge, Flame, Sparkles } from 'lucide-react';
 
 interface HeroLC76Props {
   onExploreRassos: () => void;
@@ -100,15 +100,6 @@ export const HeroLC76: React.FC<HeroLC76Props> = ({
             >
               <ShieldCheck className="w-5 h-5 text-amber-400" />
               S'inscrire à un Rasso
-            </button>
-
-            <button
-              id="hero-btn-prompt"
-              onClick={onOpenPrompt}
-              className="inline-flex items-center gap-2 bg-stone-950/70 hover:bg-stone-900 text-stone-300 border border-stone-800 font-mono text-sm px-4 py-3 rounded-lg hover:text-amber-400 transition-colors"
-            >
-              <Terminal className="w-4 h-4 text-amber-400" />
-              Voir le Prompt IA
             </button>
           </motion.div>
 
