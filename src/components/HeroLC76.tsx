@@ -61,7 +61,7 @@ export const HeroLC76: React.FC<HeroLC76Props> = ({
           >
             ROULEZ DANS LA <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600">
-              BOUE PROFONDE
+              BOUE PROFONDE • DATAX-RAKOTO
             </span>
           </motion.h1>
 

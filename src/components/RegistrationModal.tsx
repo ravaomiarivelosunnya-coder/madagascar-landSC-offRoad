@@ -26,8 +26,9 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
   const defaultRassoId = selectedRasso ? selectedRasso.id : rassos[0]?.id || '';
   const [chosenRassoId, setChosenRassoId] = useState<string>(defaultRassoId);
 
-  // Background scenic preview toggle
+  // Background scenic preview toggle & visibility intensity
   const [showScenicPreview, setShowScenicPreview] = useState<boolean>(false);
+  const [bgVisibility, setBgVisibility] = useState<'vivid' | 'ultra' | 'balanced'>('vivid');
 
   // Form State
   const [firstName, setFirstName] = useState('');
@@ -125,16 +126,27 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
             src="/terrace_registration_bg.jpg"
             alt="Paysage de terrasses et village rural"
             referrerPolicy="no-referrer"
-            className={`w-full h-full object-cover object-center transition-all duration-700 ${
-              showScenicPreview ? 'filter brightness-90 scale-100' : 'filter brightness-[0.38] contrast-[1.15] scale-105'
+            className={`w-full h-full object-cover object-center transition-all duration-500 ${
+              showScenicPreview 
+                ? 'filter brightness-100 contrast-100 scale-100' 
+                : bgVisibility === 'ultra'
+                ? 'filter brightness-100 contrast-105 saturate-125 scale-105'
+                : bgVisibility === 'vivid'
+                ? 'filter brightness-[0.94] contrast-[1.10] saturate-[1.20] scale-105'
+                : 'filter brightness-[0.78] contrast-[1.10] saturate-[1.10] scale-105'
             }`}
           />
-          {/* Subtle multi-stop gradient overlay for readability */}
+          {/* Subtle multi-stop gradient overlay carefully calibrated so the terraced fields & village remain clearly visible */}
           {!showScenicPreview && (
-            <>
-              <div className="absolute inset-0 bg-gradient-to-b from-stone-950/90 via-stone-950/75 to-stone-950/95" />
-              <div className="absolute inset-0 bg-stone-950/30 backdrop-blur-[1px]" />
-            </>
+            <div 
+              className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${
+                bgVisibility === 'ultra'
+                  ? 'bg-gradient-to-b from-stone-950/20 via-transparent to-stone-950/35'
+                  : bgVisibility === 'vivid'
+                  ? 'bg-gradient-to-b from-stone-950/35 via-stone-950/15 to-stone-950/50'
+                  : 'bg-gradient-to-b from-stone-950/55 via-stone-950/30 to-stone-950/70'
+              }`}
+            />
           )}
         </div>
 
@@ -160,6 +172,22 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Visibility Mode Switcher */}
+            <button
+              type="button"
+              onClick={() => {
+                setBgVisibility(prev => prev === 'vivid' ? 'ultra' : prev === 'ultra' ? 'balanced' : 'vivid');
+              }}
+              className="px-2.5 py-1.5 rounded-lg bg-stone-900/80 hover:bg-stone-800 text-stone-200 hover:text-amber-400 border border-stone-800 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Changer l'intensité du fond"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-[11px] hidden sm:inline">Fond :</span>
+              <span className="text-[11px] text-amber-300 font-bold uppercase">
+                {bgVisibility === 'ultra' ? '100% Éclat' : bgVisibility === 'vivid' ? 'Vibrant' : 'Équilibré'}
+              </span>
+            </button>
+
             <button
               type="button"
               onClick={() => setShowScenicPreview(!showScenicPreview)}
@@ -245,7 +273,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
               {step === 1 && (
                 <div className="space-y-5">
                   {/* Event selection banner */}
-                  <div className="p-4 rounded-xl bg-stone-950/80 backdrop-blur-md border border-stone-800/80 space-y-2">
+                  <div className="p-4 rounded-xl bg-stone-950/45 backdrop-blur-sm border border-stone-800/70 space-y-2 shadow-xl shadow-black/40">
                     <label className="block text-xs font-mono text-amber-400 uppercase font-semibold">
                       1. Sélectionner le Rassemblement 4x4
                     </label>
@@ -253,7 +281,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                       id="select-registration-rasso"
                       value={chosenRassoId}
                       onChange={(e) => setChosenRassoId(e.target.value)}
-                      className="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2.5 text-stone-100 text-sm focus:outline-none focus:border-amber-500 font-chakra"
+                      className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2.5 text-stone-100 text-sm focus:outline-none focus:border-amber-500 font-chakra"
                     >
                       {rassos.map((r) => (
                         <option key={r.id} value={r.id}>
@@ -263,7 +291,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     </select>
 
                     {activeRasso && (
-                      <div className="text-xs text-stone-400 flex flex-wrap gap-3 pt-1 font-mono">
+                      <div className="text-xs text-stone-300 flex flex-wrap gap-3 pt-1 font-mono">
                         <span>Terrain : <strong className="text-amber-300">{activeRasso.terrain}</strong></span>
                         <span>•</span>
                         <span>Niveau : <strong className="text-stone-200">{activeRasso.difficulty}</strong></span>
@@ -274,14 +302,14 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                   </div>
 
                   {/* Pilot Personal info */}
-                  <div className="p-4 rounded-xl bg-stone-950/80 backdrop-blur-md border border-stone-800/80">
+                  <div className="p-4 rounded-xl bg-stone-950/45 backdrop-blur-sm border border-stone-800/70 shadow-xl shadow-black/40">
                     <h3 className="text-sm font-chakra font-bold text-stone-200 uppercase mb-3 flex items-center gap-2">
                       <User className="w-4 h-4 text-amber-500" /> Informations Pilote
                     </h3>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-mono text-stone-400 mb-1">Prénom *</label>
+                        <label className="block text-xs font-mono text-stone-300 mb-1">Prénom *</label>
                         <input
                           id="input-pilot-firstname"
                           type="text"
@@ -289,12 +317,12 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                           placeholder="Thomas"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
+                          className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-mono text-stone-400 mb-1">Nom *</label>
+                        <label className="block text-xs font-mono text-stone-300 mb-1">Nom *</label>
                         <input
                           id="input-pilot-lastname"
                           type="text"
@@ -302,12 +330,12 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                           placeholder="Garnier"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
+                          className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-mono text-stone-400 mb-1">
+                        <label className="block text-xs font-mono text-stone-300 mb-1">
                           Pseudo / Indicatif Radio (Callsign)
                         </label>
                         <input
@@ -316,12 +344,12 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                           placeholder="ex: LC76_MudTrack"
                           value={callsign}
                           onChange={(e) => setCallsign(e.target.value)}
-                          className="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-sm text-amber-300 font-mono focus:outline-none focus:border-amber-500"
+                          className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-amber-300 font-mono focus:outline-none focus:border-amber-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-mono text-stone-400 mb-1">Email pour le Pass *</label>
+                        <label className="block text-xs font-mono text-stone-300 mb-1">Email pour le Pass *</label>
                         <input
                           id="input-pilot-email"
                           type="email"
@@ -329,35 +357,35 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                           placeholder="pilote@tout-terrain.fr"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
+                          className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-mono text-stone-400 mb-1">Téléphone portable</label>
+                        <label className="block text-xs font-mono text-stone-300 mb-1">Téléphone portable</label>
                         <input
                           id="input-pilot-phone"
                           type="tel"
                           placeholder="06 12 34 56 78"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
+                          className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
                         />
                       </div>
 
-                  <div>
-                    <label className="block text-xs font-mono text-stone-400 mb-1">Contact d'urgence (Nom & Tél)</label>
-                    <input
-                      id="input-pilot-emergency"
-                      type="text"
-                      placeholder="ex: Sophie 06 99 88 77 66"
-                      value={emergencyContact}
-                      onChange={(e) => setEmergencyContact(e.target.value)}
-                      className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
-                    />
+                      <div>
+                        <label className="block text-xs font-mono text-stone-300 mb-1">Contact d'urgence (Nom & Tél)</label>
+                        <input
+                          id="input-pilot-emergency"
+                          type="text"
+                          placeholder="ex: Sophie 06 99 88 77 66"
+                          value={emergencyContact}
+                          onChange={(e) => setEmergencyContact(e.target.value)}
+                          className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
               {/* Action */}
               <div className="pt-4 flex justify-end">
@@ -381,19 +409,19 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
 
           {step === 2 && (
             <div className="space-y-6">
-              <div>
-                <h3 className="text-sm font-chakra font-bold text-stone-200 uppercase mb-3 flex items-center gap-2">
+              <div className="p-4 rounded-xl bg-stone-950/45 backdrop-blur-sm border border-stone-800/70 shadow-xl shadow-black/40 space-y-4">
+                <h3 className="text-sm font-chakra font-bold text-stone-200 uppercase flex items-center gap-2">
                   <Truck className="w-4 h-4 text-amber-500" /> Fiche Technique du Tout-Terrain
                 </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-mono text-stone-400 mb-1">Marque du 4x4</label>
+                    <label className="block text-xs font-mono text-stone-300 mb-1">Marque du 4x4</label>
                     <select
                       id="select-vehicle-brand"
                       value={brand}
                       onChange={(e) => setBrand(e.target.value)}
-                      className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 focus:border-amber-500"
+                      className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 focus:border-amber-500"
                     >
                       <option value="Toyota">Toyota (Land Cruiser / Hilux)</option>
                       <option value="Nissan">Nissan (Patrol / Terrano)</option>
@@ -406,56 +434,56 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-stone-400 mb-1">Modèle exact</label>
+                    <label className="block text-xs font-mono text-stone-300 mb-1">Modèle exact</label>
                     <input
                       id="input-vehicle-model"
                       type="text"
                       placeholder="ex: Land Cruiser LC76 Station Wagon"
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
-                      className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 focus:border-amber-500 font-chakra font-semibold"
+                      className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 focus:border-amber-500 font-chakra font-semibold"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-stone-400 mb-1">Immatriculation</label>
+                    <label className="block text-xs font-mono text-stone-300 mb-1">Immatriculation</label>
                     <input
                       id="input-vehicle-plate"
                       type="text"
                       placeholder="ex: AB-123-CD"
                       value={plate}
                       onChange={(e) => setPlate(e.target.value)}
-                      className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 font-mono uppercase"
+                      className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 font-mono uppercase"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-stone-400 mb-1">Année</label>
+                    <label className="block text-xs font-mono text-stone-300 mb-1">Année</label>
                     <input
                       id="input-vehicle-year"
                       type="text"
                       placeholder="ex: 2024"
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
-                      className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 font-mono"
+                      className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 font-mono"
                     />
                   </div>
                 </div>
 
                 {/* Mud & Technical Equipment */}
-                <div className="p-4 rounded-xl bg-stone-950/80 border border-stone-800 space-y-4">
+                <div className="p-4 rounded-xl bg-stone-950/40 border border-stone-800/80 space-y-4">
                   <div className="text-xs font-mono text-amber-400 uppercase font-bold flex items-center gap-1.5">
                     <Flame className="w-4 h-4" /> Préparation Mud & Franchissement
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-mono text-stone-400 mb-1">Profil des Pneumatiques</label>
+                      <label className="block text-xs font-mono text-stone-300 mb-1">Profil des Pneumatiques</label>
                       <select
                         id="select-tire-type"
                         value={tireType}
                         onChange={(e: any) => setTireType(e.target.value)}
-                        className="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 text-xs text-stone-100"
+                        className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-xs text-stone-100"
                       >
                         <option value="Mud-Terrain (MT)">Mud-Terrain (MT) - Crampons profonds</option>
                         <option value="Extrême Mud (Bogger)">Extrême Mud (Simex / Bogger / Silverstone)</option>
@@ -465,21 +493,21 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-xs font-mono text-stone-400 mb-1">Dimension Pneus & Réhausse</label>
+                      <label className="block text-xs font-mono text-stone-300 mb-1">Dimension Pneus & Réhausse</label>
                       <input
                         id="input-tire-size"
                         type="text"
                         value={tireSize}
                         onChange={(e) => setTireSize(e.target.value)}
                         placeholder="ex: 285/75 R16 (33 pouces)"
-                        className="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 text-xs text-stone-100"
+                        className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-xs text-stone-100"
                       />
                     </div>
                   </div>
 
                   {/* Checkable off-road specs */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2">
-                    <label className="flex items-center gap-2 p-2.5 rounded-lg bg-stone-900/80 border border-stone-800 cursor-pointer text-xs">
+                    <label className="flex items-center gap-2 p-2.5 rounded-lg bg-stone-900/70 border border-stone-800/80 cursor-pointer text-xs hover:bg-stone-900 transition-colors">
                       <input
                         type="checkbox"
                         checked={hasWinch}
@@ -489,7 +517,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                       <span className="text-stone-200">Treuil avant opérationnel</span>
                     </label>
 
-                    <label className="flex items-center gap-2 p-2.5 rounded-lg bg-stone-900/80 border border-stone-800 cursor-pointer text-xs">
+                    <label className="flex items-center gap-2 p-2.5 rounded-lg bg-stone-900/70 border border-stone-800/80 cursor-pointer text-xs hover:bg-stone-900 transition-colors">
                       <input
                         type="checkbox"
                         checked={hasSnorkel}
@@ -499,7 +527,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                       <span className="text-stone-200">Snorkel étanche</span>
                     </label>
 
-                    <label className="flex items-center gap-2 p-2.5 rounded-lg bg-stone-900/80 border border-stone-800 cursor-pointer text-xs">
+                    <label className="flex items-center gap-2 p-2.5 rounded-lg bg-stone-900/70 border border-stone-800/80 cursor-pointer text-xs hover:bg-stone-900 transition-colors">
                       <input
                         type="checkbox"
                         checked={hasDiffLock}
@@ -513,32 +541,32 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
               </div>
 
               {/* Bivouac & Comms Options */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-stone-950/45 backdrop-blur-sm border border-stone-800/70 shadow-xl shadow-black/40">
                 <div>
-                  <label className="block text-xs font-mono text-stone-400 mb-1">Nombre d'occupants</label>
+                  <label className="block text-xs font-mono text-stone-300 mb-1">Nombre d'occupants</label>
                   <input
                     type="number"
                     min="1"
                     max="6"
                     value={passengersCount}
                     onChange={(e) => setPassengersCount(Number(e.target.value))}
-                    className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100"
+                    className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-stone-400 mb-1">Canal Radio CB / VHF</label>
+                  <label className="block text-xs font-mono text-stone-300 mb-1">Canal Radio CB / VHF</label>
                   <input
                     type="text"
                     value={cbChannel}
                     onChange={(e) => setCbChannel(e.target.value)}
                     placeholder="Canal 16 CB"
-                    className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-100 font-mono"
+                    className="w-full bg-stone-900/80 border border-stone-700/80 rounded-lg px-3 py-2 text-sm text-stone-100 font-mono"
                   />
                 </div>
 
                 <div className="flex flex-col justify-end">
-                  <label className="flex items-center gap-2 p-2.5 rounded-lg bg-stone-950 border border-stone-800 cursor-pointer text-xs">
+                  <label className="flex items-center gap-2 p-2.5 rounded-lg bg-stone-900/70 border border-stone-800/80 cursor-pointer text-xs hover:bg-stone-900 transition-colors">
                     <input
                       type="checkbox"
                       checked={bivouac}
