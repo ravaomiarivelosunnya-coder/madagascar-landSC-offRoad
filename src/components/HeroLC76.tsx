@@ -67,14 +67,13 @@ export const HeroLC76: React.FC<HeroLC76Props> = ({
 
           {/* Subtitle */}
           <motion.p
+            id="hero-rasso-subtitle"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg sm:text-xl text-stone-300 max-w-2xl font-normal leading-relaxed mb-8 drop-shadow"
+            className="text-lg sm:text-xl text-stone-200 max-w-2xl font-normal leading-relaxed mb-8 drop-shadow"
           >
-            Le portail français des rassemblements 4x4, bourbiers, bivouacs et raids tout-terrain. 
-            Consultez les dates des rasso, inscrivez votre 4x4 (Toyota LC76, Patrol, Defender, Rubicon) 
-            et rejoignez la communauté des franchisseurs.
+            Le portail officiel du <strong className="text-amber-400 font-semibold">Rasso Malagasy de Off-Road</strong>, des bourbiers de latérite rouge, des pistes sauvages et des bivouacs tout-terrain. Consultez les dates des rassemblements, inscrivez votre 4x4 (Toyota LC76, Patrol, Hilux, Defender) et rejoignez la communauté des franchisseurs passionnés.
           </motion.p>
 
           {/* CTAs */}
